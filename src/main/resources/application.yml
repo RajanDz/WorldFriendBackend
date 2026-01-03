@@ -1,0 +1,11 @@
+spring:
+  datasource:
+      name: MySQL Connection
+      url: jdbc:mysql://localhost:3306/worldFriend
+      username: root
+      password: ${DATABASE_PASSWORD}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+app:
+  jwtSecret: ${JWT_SECRET}
+  jwtExpirationMs: ${JWT_EXPIRATION_MS}
