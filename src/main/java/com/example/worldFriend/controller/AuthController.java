@@ -5,6 +5,8 @@ import com.example.worldFriend.dto.SigninDto;
 import com.example.worldFriend.security.CustomUserDetails;
 import com.example.worldFriend.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,16 +27,15 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-
+    private static Logger logger = LoggerFactory.getLogger(AuthController.class);
     @PostMapping("/signin")
     public String signin(@RequestBody SigninDto signinRequest){
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(),signinRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            logger.info("User principal: {}", authentication);
 
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
-            String token = jwtUtils.generateToken(userDetails);
+            String token = jwtUtils.generateToken(authentication);
 
             return token;
         } catch (Exception e) {
