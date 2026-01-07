@@ -49,7 +49,7 @@ public class WebConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/auth/**").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/api/users/**").hasRole("USER")
                 );
 
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);

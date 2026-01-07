@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username).orElseThrow();
-        List<GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
-        return new CustomUserDetails(user.getUsername(),user.getPassword(),authorities);
+        List<GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName())).collect(Collectors.toList());
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),authorities);
     }
 }

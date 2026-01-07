@@ -2,6 +2,7 @@ package com.example.worldFriend.security.jwt;
 
 import com.example.worldFriend.model.User;
 import com.example.worldFriend.repository.UserRepo;
+import com.example.worldFriend.security.CustomUserDetails;
 import com.example.worldFriend.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -13,12 +14,16 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -38,11 +43,15 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    public String generateToken(UserDetails userDetails){
-        User user = userService.findUserByUsername(userDetails.getUsername());
+    public String generateToken(Authentication authentication){
+        UserDetails user = (UserDetails) authentication.getPrincipal();
+        List<String> authorities = user.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                                .toList();
+        logger.info("auth roles: {}", authentication.getAuthorities());
         return Jwts.builder()
                 .subject(user.getUsername())
-                .claim("roles: ",user.getRoles())
+                .claim("roles: ",authorities)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(key())

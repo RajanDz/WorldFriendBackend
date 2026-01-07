@@ -30,22 +30,22 @@ public class UserTableTest {
 
     @Test
     void createUser(){
-        User user = new User("Maria","Nickle","maria@gmail.com","John2025", passwordEncoder.encode("MyPassword123"));
+        User user = new User("Sucko","Dzaferadzovic","sukijano","suki@gmail.com", passwordEncoder.encode("MyPassword123"));
         userRepository.save(user);
         logger.info("User saved: {}", user);
     }
 
     @Test
     void createRole(){
-        Role role = new Role("Admin");
+        Role role = new Role("USER");
         roleRepository.save(role);
         logger.info("Created role: {}", role);
     }
 
     @Test
     void assignRoleToUser(){
-        User user = userRepository.findById(2).orElseThrow();
-        Role role = roleRepository.findById(1).orElseThrow();
+        User user = userRepository.findById(3).orElseThrow();
+        Role role = roleRepository.findById(2).orElseThrow();
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
