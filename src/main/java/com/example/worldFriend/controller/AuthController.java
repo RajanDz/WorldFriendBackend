@@ -1,7 +1,9 @@
 package com.example.worldFriend.controller;
 
 
+import com.example.worldFriend.dto.AuthResponse;
 import com.example.worldFriend.dto.SigninDto;
+import com.example.worldFriend.generics.ApiResponse;
 import com.example.worldFriend.security.CustomUserDetails;
 import com.example.worldFriend.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,17 +31,14 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private static Logger logger = LoggerFactory.getLogger(AuthController.class);
     @PostMapping("/signin")
-    public String signin(@RequestBody SigninDto signinRequest){
-        try {
+    public ResponseEntity<ApiResponse<AuthResponse>> signin(@RequestBody SigninDto signinRequest){
+
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(),signinRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             logger.info("User principal: {}", authentication);
 
             String token = jwtUtils.generateToken(authentication);
 
-            return token;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+            return ResponseEntity.ok().body(ApiResponse.success("Login successful", new AuthResponse(token)));
     }
 }

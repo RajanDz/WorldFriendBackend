@@ -1,9 +1,12 @@
 package com.example.worldFriend.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@RequiredArgsConstructor
+@Getter
 public class AuthResponse {
-
-    private String jwt;
+    private final String jwt;
+    private String type = "Bearer";
 }
