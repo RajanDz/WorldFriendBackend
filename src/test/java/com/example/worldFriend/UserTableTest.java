@@ -44,7 +44,7 @@ public class UserTableTest {
 
     @Test
     void assignRoleToUser(){
-        User user = userRepository.findById(3).orElseThrow();
+        User user = userRepository.findById(4).orElseThrow();
         Role role = roleRepository.findById(2).orElseThrow();
         Set<Role> roles = new HashSet<>();
         roles.add(role);
