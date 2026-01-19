@@ -2,10 +2,14 @@ package com.example.worldFriend.controller;
 
 
 import com.example.worldFriend.dto.AuthResponse;
+import com.example.worldFriend.dto.RegistrationRequest;
 import com.example.worldFriend.dto.SigninDto;
 import com.example.worldFriend.generics.ApiResponse;
+import com.example.worldFriend.model.User;
 import com.example.worldFriend.security.CustomUserDetails;
 import com.example.worldFriend.security.jwt.JwtUtils;
+import com.example.worldFriend.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +33,7 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final AuthService authService;
     private static Logger logger = LoggerFactory.getLogger(AuthController.class);
     @PostMapping("/signin")
     public ResponseEntity<ApiResponse<AuthResponse>> signin(@RequestBody SigninDto signinRequest){
@@ -40,5 +45,11 @@ public class AuthController {
             String token = jwtUtils.generateToken(authentication);
 
             return ResponseEntity.ok().body(ApiResponse.success("Login successful", new AuthResponse(token)));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<User>> signup(@Valid @RequestBody RegistrationRequest request){
+        ApiResponse<User> registrationProcces = authService.registration(request);
+        return ResponseEntity.ok(registrationProcces);
     }
 }

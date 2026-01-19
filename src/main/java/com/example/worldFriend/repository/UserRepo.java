@@ -14,4 +14,6 @@ public interface UserRepo extends JpaRepository<User,Integer> {
             where u.username = :username
             """)
     Optional<User> findByUsername(String username);
+
+    Optional<User> findByEmail(String email);
 }
