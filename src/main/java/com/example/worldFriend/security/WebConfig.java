@@ -49,7 +49,8 @@ public class WebConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/api/users/**").hasRole("USER")
+                                .requestMatchers("/api/users/**").authenticated()
+                                .requestMatchers("/api/locations/**").authenticated()
                 );
 
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
