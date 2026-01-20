@@ -1,8 +1,11 @@
 package com.example.worldFriend;
 
 
+import com.example.worldFriend.enums.LocationType;
+import com.example.worldFriend.model.Location;
 import com.example.worldFriend.model.Role;
 import com.example.worldFriend.model.User;
+import com.example.worldFriend.repository.LocationRepository;
 import com.example.worldFriend.repository.RoleRepo;
 import com.example.worldFriend.repository.UserRepo;
 import org.junit.jupiter.api.Test;
@@ -28,6 +31,9 @@ public class UserTableTest {
     @Autowired
     private RoleRepo roleRepository;
 
+    @Autowired
+    private LocationRepository locationRepository;
+
     @Test
     void createUser(){
         User user = new User("Sucko","Dzaferadzovic","sukijano","suki@gmail.com", passwordEncoder.encode("MyPassword123"));
@@ -37,19 +43,25 @@ public class UserTableTest {
 
     @Test
     void createRole(){
-        Role role = new Role("USER");
+        Role role = new Role("LOC_ADMIN");
         roleRepository.save(role);
         logger.info("Created role: {}", role);
     }
 
     @Test
     void assignRoleToUser(){
-        User user = userRepository.findById(4).orElseThrow();
+        User user = userRepository.findByUsername("arronDenmark2026").orElseThrow();
         Role role = roleRepository.findById(2).orElseThrow();
-        Set<Role> roles = new HashSet<>();
+        Set<Role> roles = user.getRoles();
         roles.add(role);
-        user.setRoles(roles);
         userRepository.save(user);
         logger.info("Role is assigned to user: {}", role,user);
+    }
+
+    @Test
+    void createLocation(){
+       Location location = Location.create("Brdo Gorica", "Najljepse brdo Podgorice", LocationType.ATTRACTION,"Crna Gore", 242.242,353.5335, "Podgorica");
+       locationRepository.save(location);
+       logger.info("Saved object: {}", location);
     }
 }
