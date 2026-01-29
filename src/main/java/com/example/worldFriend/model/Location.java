@@ -2,8 +2,8 @@ package com.example.worldFriend.model;
 
 import com.example.worldFriend.enums.LocationType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
         }
 )
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 public class Location {
 
     @Id
@@ -24,48 +25,46 @@ public class Location {
     private Long id;
 
     @Column(name = "name")
+    @NonNull
     private String name;
 
     @Column(name = "description")
+    @NonNull
     private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
+    @NonNull
     private LocationType type;
 
     @Column(name = "country")
+    @NonNull
     private String country;
 
     @Column(name = "city")
+    @NonNull
     private String city;
 
     @Column(name = "latitude")
+    @NonNull
     private double latitude;
 
     @Column(name = "longitude")
+    @NonNull
     private double longitude;
+
+    @Column(name = "cover_image_url")
+    private String coverImageUrl;
+
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    public static Location create(
-            String name,
-            String description,
-            LocationType type,
-            String country,
-            double latitude,
-            double longitude,
-            String city
-    ) {
-        Location location = new Location();
-        location.name = name;
-        location.description = description;
-        location.type = type;
-        location.country = country;
-        location.latitude = latitude;
-        location.longitude = longitude;
-        location.city = city;
-        return location;
+
+
+    public void updateImgUrl(String coverImageUrl){
+        this.coverImageUrl = coverImageUrl;
     }
+
 }
