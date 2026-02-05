@@ -4,6 +4,7 @@ package com.example.worldFriend.security;
 import com.example.worldFriend.security.jwt.AuthTokenFilter;
 import com.example.worldFriend.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,15 +19,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
-public class WebConfig {
+public class WebConfig{
 
     private final CustomUserDetailsService userDetailsService;
     private final AuthTokenFilter authTokenFilter;
+
+
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
@@ -51,6 +57,8 @@ public class WebConfig {
                         auth.requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/api/users/**").authenticated()
                                 .requestMatchers("/api/locations/**").authenticated()
+                                .requestMatchers("/media/**").permitAll()
+                                .anyRequest().authenticated()
                 );
 
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
