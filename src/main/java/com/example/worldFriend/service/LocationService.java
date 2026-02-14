@@ -4,6 +4,7 @@ import com.example.worldFriend.dto.CreateLocationRequest;
 import com.example.worldFriend.model.Location;
 import com.example.worldFriend.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,13 @@ public class LocationService {
     private String defaultPath = "C:/Users/Rajan44/OneDrive/Desktop/worldFriendCoverImgs/";
     private final LocationRepository locationRepository;
 
+    public Location findLocationById(long id){
+        return locationRepository.findById(id).orElseThrow( () ->new ResponseStatusException(HttpStatus.NOT_FOUND,"We cannot find location with provided id"));
+    }
+
+    public List<Location> getRecommendedLocations(){
+        return locationRepository.findAll(PageRequest.of(0,5)).getContent();
+    }
     public Location createLocation(CreateLocationRequest locationRequest){
         Location location = new Location(locationRequest.getName(),locationRequest.getDescription(),locationRequest.getType(),locationRequest.getCountry(),locationRequest.getCity(),locationRequest.getLatitude(),locationRequest.getLongitude());
         locationRepository.save(location);
