@@ -6,6 +6,7 @@ import com.example.worldFriend.generics.ApiResponse;
 import com.example.worldFriend.model.Location;
 import com.example.worldFriend.repository.LocationRepository;
 import com.example.worldFriend.service.LocationService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,11 @@ public class LocationsController {
 
         private final LocationService locationService;
 
-
+        @GetMapping("/public/findLocationById/{id}")
+        public ResponseEntity<ApiResponse<Location>> getLocationsById(@PathVariable long id){
+            Location location = locationService.findLocationById(id);
+            return  ResponseEntity.ok(ApiResponse.success("We found location you are searching for", location));
+        }
 
         @PostMapping("/createLocation")
         public ResponseEntity<ApiResponse<Location>> createLocation(@Valid @RequestBody CreateLocationRequest request) {
@@ -50,5 +55,11 @@ public class LocationsController {
         public ResponseEntity<ApiResponse<List<Location>>> findByCity(@PathVariable(name = "city")String cityName){
             List<Location> locations = locationService.findByCityName(cityName);
             return ResponseEntity.ok(ApiResponse.success("Found locations by city name: ", locations));
+        }
+
+        @GetMapping("/public/getRecommendedLocations")
+        public ResponseEntity<ApiResponse<List<Location>>> getRecommendedLocations(){
+            List<Location> locations = locationService.getRecommendedLocations();
+            return ResponseEntity.ok(ApiResponse.success("Found 5 recommended locations.", locations));
         }
 }
