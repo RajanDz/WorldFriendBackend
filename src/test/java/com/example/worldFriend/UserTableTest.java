@@ -60,7 +60,7 @@ public class UserTableTest {
 
     @Test
     void createLocation(){
-        Location location = new Location("Fontanta","Fontana je atrakcija dugi niz godina glavnog grada Podgorica. Okuplja kako mladje tako i starije koji vezu svoje uspomene za taj dio grada.", LocationType.ATTRACTION,"Crna Gora", "Podgorica", 0.0,0.0, ".jpg");
+        Location location = new Location("Fontanta","Fontana je atrakcija dugi niz godina glavnog grada Podgorica. Okuplja kako mladje tako i starije koji vezu svoje uspomene za taj dio grada.", LocationType.ATTRACTION,"Crna Gora", "Podgorica", 0.0,0.0);
        locationRepository.save(location);
        logger.info("Saved object: {}", location);
     }
