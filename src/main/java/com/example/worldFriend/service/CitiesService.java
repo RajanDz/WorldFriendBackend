@@ -40,6 +40,7 @@ public class CitiesService {
         return citiesRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "We can not find city with provided id"));
     }
 
+
     public List<City> findCitiesBySearchParamters(String name) {
         return citiesRepository.findByNameContainingIgnoreCase(name);
     }
@@ -87,5 +88,4 @@ public class CitiesService {
                     criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         });
     }
-
 }

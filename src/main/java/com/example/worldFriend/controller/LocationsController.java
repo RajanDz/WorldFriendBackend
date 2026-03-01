@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,10 +39,14 @@ public class LocationsController {
             Location locationMethod = locationService.createLocation(request);
             return ResponseEntity.ok(ApiResponse.success("Created", locationMethod));
         }
-
+//        @GetMapping("/public/locations")
+//        public ResponseEntity<ApiResponse<List<Location>>> searchLocations(@RequestParam(name = "name") String name){
+//            List<Location> locationList = locationService.findLocationsByContainingKey(name);
+//            return ResponseEntity.ok(ApiResponse.success("Successfully", locationList));
+//        }
         @PostMapping("/uploadImg")
         public ResponseEntity<ApiResponse<Location>> uploadImg(
-                @RequestParam(name = "id") long id
+                @RequestParam(name = "id") Long id
                 ,@RequestParam(name = "img") MultipartFile file) throws IOException {
 
             Location uploadImg = locationService.uploadImage(id,file);
@@ -59,7 +64,11 @@ public class LocationsController {
             List<Location> locations = locationService.findByCityName(cityName);
             return ResponseEntity.ok(ApiResponse.success("Found locations by city name: ", locations));
         }
-
+//        @GetMapping("/public/similarLocations/{id}")
+//        public ResponseEntity<ApiResponse<List<Location>>> getSimilarLocations(@PathVariable(name = "id")Long id){
+//            List<Location> locations = locationService.findLocationsByCityId(id);
+//            return ResponseEntity.ok(ApiResponse.success("Locations list", locations));
+//        }
         @GetMapping("/public/getRecommendedLocations")
         public ResponseEntity<ApiResponse<List<Location>>> getRecommendedLocations(){
             List<Location> locations = locationService.getRecommendedLocations();

@@ -12,4 +12,6 @@ import java.util.List;
 public interface LocationRepository extends JpaRepository<Location, Long>, JpaSpecificationExecutor<Location> {
     List<Location> findByCountry(String countryName);
     List<Location> findByCity(String cityName);
+    List<Location> findByCityId(Long id);
+    List<Location> findByNameContainingIgnoreCase(String name);
 }

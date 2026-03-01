@@ -2,9 +2,11 @@ package com.example.worldFriend;
 
 
 import com.example.worldFriend.enums.LocationType;
+import com.example.worldFriend.model.City;
 import com.example.worldFriend.model.Location;
 import com.example.worldFriend.model.Role;
 import com.example.worldFriend.model.User;
+import com.example.worldFriend.repository.CitiesRepository;
 import com.example.worldFriend.repository.LocationRepository;
 import com.example.worldFriend.repository.RoleRepo;
 import com.example.worldFriend.repository.UserRepo;
@@ -34,6 +36,9 @@ public class UserTableTest {
     @Autowired
     private LocationRepository locationRepository;
 
+    @Autowired
+    private CitiesRepository citiesRepository;
+
     @Test
     void createUser(){
         User user = new User("Sucko","Dzaferadzovic","sukijano","suki@gmail.com", passwordEncoder.encode("MyPassword123"));
@@ -60,8 +65,17 @@ public class UserTableTest {
 
     @Test
     void createLocation(){
-        Location location = new Location("Fontanta","Fontana je atrakcija dugi niz godina glavnog grada Podgorica. Okuplja kako mladje tako i starije koji vezu svoje uspomene za taj dio grada.", LocationType.ATTRACTION,"Crna Gora", "Podgorica", 0.0,0.0);
-       locationRepository.save(location);
-       logger.info("Saved object: {}", location);
+        City city = citiesRepository.findById(1L).orElseThrow();
+        Location location = new Location("City kvart","City kvart je lijep i miran kvart u kojem sve ima.", LocationType.ATTRACTION,"Crna Gora", "Podgorica", 0.0,0.0,city);
+        locationRepository.save(location);
+        logger.info("Saved object: {}", location);
+    }
+
+
+    @Test
+    void insertCity(){
+        City city = new City("Milan", "Milano je jedan od najposjecenih gradova u Italiji i cijeloj evropi",0.0,0.0, "Italy");
+        citiesRepository.save(city);
+        logger.info("Saved object: {}", city);
     }
 }
