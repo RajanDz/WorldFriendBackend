@@ -77,6 +77,8 @@ public class WebConfig{
                                 .requestMatchers("/api/users/**").authenticated()
                                 .requestMatchers("/api/locations/public/**").permitAll()
                                 .requestMatchers("/api/locations/**").authenticated()
+                                .requestMatchers("/api/cities/public/**").permitAll()
+                                .requestMatchers("/api/cities/**").authenticated()
                                 .requestMatchers("/media/**").permitAll()
                                 .anyRequest().authenticated()
                 );
