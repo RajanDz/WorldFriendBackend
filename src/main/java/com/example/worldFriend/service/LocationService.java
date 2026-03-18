@@ -12,7 +12,10 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -91,6 +94,10 @@ public class LocationService {
         return locations;
     }
 
+        public Page<Location> getLocationVySearchFilters(SearchFiltersDto searchFiltersDto, Pageable pageable){
+        Specification<Location> query = getFiltersQuery(searchFiltersDto);
+        return  locationRepository.findAll(query,pageable);
+
         public List<Location> getLocationVySearchFilters(SearchFiltersDto searchFiltersDto){
         Specification<Location> query = getFiltersQuery(searchFiltersDto);
         return  locationRepository.findAll(query);
@@ -118,4 +125,5 @@ public class LocationService {
                     criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         });
     }
+
 }

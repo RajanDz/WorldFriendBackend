@@ -10,6 +10,10 @@ import com.example.worldFriend.service.LocationService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,6 +67,14 @@ public class LocationsController {
         public ResponseEntity<ApiResponse<List<Location>>> getRecommendedLocations(){
             List<Location> locations = locationService.getRecommendedLocations();
             return ResponseEntity.ok(ApiResponse.success("Found 5 recommended locations.", locations));
+        }
+
+        @PostMapping("/public/searchByFilters")
+        public ResponseEntity<ApiResponse<Page<Location>>> searchLocationByFilters(@RequestBody SearchFiltersDto searchFiltersDto,
+                                                                                   @RequestParam(name = "page")int page){
+            PageRequest pageRequest = PageRequest.of(page,10);
+            Page<Location> locationsList = locationService.getLocationVySearchFilters(searchFiltersDto, pageRequest);
+            return ResponseEntity.ok(ApiResponse.success("Location list successfully returned.", locationsList));
         }
 
         @PostMapping("/public/searchByFilters")
