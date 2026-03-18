@@ -1,16 +1,22 @@
 package com.example.worldFriend.service;
 
 import com.example.worldFriend.dto.CreateLocationRequest;
+import com.example.worldFriend.dto.SearchFiltersDto;
+import com.example.worldFriend.enums.LocationType;
 import com.example.worldFriend.model.Location;
 import com.example.worldFriend.repository.LocationRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-<<<<<<< Updated upstream
-=======
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
->>>>>>> Stashed changes
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,42 +35,46 @@ public class LocationService {
 
     private String defaultPath = "C:/Users/Rajan44/OneDrive/Desktop/worldFriendCoverImgs/";
     private final LocationRepository locationRepository;
+    private final EntityManager entityManager;
 
-    public Location findLocationById(long id){
-        return locationRepository.findById(id).orElseThrow( () ->new ResponseStatusException(HttpStatus.NOT_FOUND,"We cannot find location with provided id"));
+    public Location findLocationById(long id) {
+        return locationRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "We cannot find location with provided id"));
     }
 
-    public List<Location> getRecommendedLocations(){
-        return locationRepository.findAll(PageRequest.of(0,5)).getContent();
+    public List<Location> getRecommendedLocations() {
+        return locationRepository.findAll(PageRequest.of(0, 5)).getContent();
     }
-    public Location createLocation(CreateLocationRequest locationRequest){
-        Location location = new Location(locationRequest.getName(),locationRequest.getDescription(),locationRequest.getType(),locationRequest.getCountry(),locationRequest.getCity(),locationRequest.getLatitude(),locationRequest.getLongitude());
+
+    public Location createLocation(CreateLocationRequest locationRequest) {
+        Location location = new Location(locationRequest.getName(), locationRequest.getDescription(), locationRequest.getType(), locationRequest.getCountry(), locationRequest.getCity(), locationRequest.getLatitude(), locationRequest.getLongitude());
         locationRepository.save(location);
         return location;
     }
-    public Location uploadImage(long id,MultipartFile file) throws IOException {
 
-        if (file == null || file.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Image file is required");
+    public Location uploadImage(long id, MultipartFile file) throws IOException {
+
+        if (file == null || file.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file is required");
         }
 
-        Location location = locationRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"No user exist with user id : " + id));
+        Location location = locationRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No user exist with user id : " + id));
 
         String original = file.getOriginalFilename();
         String ex = original.substring(original.lastIndexOf("."));
         String uniqueName = java.util.UUID.randomUUID() + ex;
-        Path filePath = Paths.get(defaultPath,uniqueName);
+        Path filePath = Paths.get(defaultPath, uniqueName);
         System.out.println(filePath);
-        Files.copy(file.getInputStream(),filePath);
+        Files.copy(file.getInputStream(), filePath);
 
         location.updateImgUrl("/" + uniqueName);
         locationRepository.save(location);
         return location;
 
     }
-    public List<Location> findByCountryName(String countryName){
+
+    public List<Location> findByCountryName(String countryName) {
         List<Location> locations = locationRepository.findByCountry(countryName);
-        if (locations.isEmpty()){
+        if (locations.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     "No locations for country name: " + countryName
@@ -72,9 +83,9 @@ public class LocationService {
         return locations;
     }
 
-    public List<Location> findByCityName(String cityName){
+    public List<Location> findByCityName(String cityName) {
         List<Location> locations = locationRepository.findByCity(cityName);
-        if (locations.isEmpty()){
+        if (locations.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     "No locations for city name: " + cityName
@@ -82,12 +93,14 @@ public class LocationService {
         }
         return locations;
     }
-<<<<<<< Updated upstream
-=======
 
         public Page<Location> getLocationVySearchFilters(SearchFiltersDto searchFiltersDto, Pageable pageable){
         Specification<Location> query = getFiltersQuery(searchFiltersDto);
         return  locationRepository.findAll(query,pageable);
+
+        public List<Location> getLocationVySearchFilters(SearchFiltersDto searchFiltersDto){
+        Specification<Location> query = getFiltersQuery(searchFiltersDto);
+        return  locationRepository.findAll(query);
     }
     public Specification<Location> getFiltersQuery(SearchFiltersDto searchFilters) {
         return ((root, query, criteriaBuilder) -> {
@@ -112,5 +125,5 @@ public class LocationService {
                     criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         });
     }
->>>>>>> Stashed changes
+
 }

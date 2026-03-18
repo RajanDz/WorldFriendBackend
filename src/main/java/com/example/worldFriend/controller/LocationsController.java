@@ -2,6 +2,7 @@ package com.example.worldFriend.controller;
 
 
 import com.example.worldFriend.dto.CreateLocationRequest;
+import com.example.worldFriend.dto.SearchFiltersDto;
 import com.example.worldFriend.generics.ApiResponse;
 import com.example.worldFriend.model.Location;
 import com.example.worldFriend.repository.LocationRepository;
@@ -9,13 +10,11 @@ import com.example.worldFriend.service.LocationService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-<<<<<<< Updated upstream
-=======
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
->>>>>>> Stashed changes
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -69,8 +68,6 @@ public class LocationsController {
             List<Location> locations = locationService.getRecommendedLocations();
             return ResponseEntity.ok(ApiResponse.success("Found 5 recommended locations.", locations));
         }
-<<<<<<< Updated upstream
-=======
 
         @PostMapping("/public/searchByFilters")
         public ResponseEntity<ApiResponse<Page<Location>>> searchLocationByFilters(@RequestBody SearchFiltersDto searchFiltersDto,
@@ -79,5 +76,10 @@ public class LocationsController {
             Page<Location> locationsList = locationService.getLocationVySearchFilters(searchFiltersDto, pageRequest);
             return ResponseEntity.ok(ApiResponse.success("Location list successfully returned.", locationsList));
         }
->>>>>>> Stashed changes
+
+        @PostMapping("/public/searchByFilters")
+        public ResponseEntity<ApiResponse<List<Location>>> searchLocationByFilters(@RequestBody SearchFiltersDto searchFiltersDto){
+            List<Location> locationsList = locationService.getLocationVySearchFilters(searchFiltersDto);
+            return ResponseEntity.ok(ApiResponse.success("Location list successfully returned.", locationsList));
+        }
 }
