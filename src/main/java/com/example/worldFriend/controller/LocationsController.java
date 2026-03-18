@@ -9,6 +9,13 @@ import com.example.worldFriend.service.LocationService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+<<<<<<< Updated upstream
+=======
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+>>>>>>> Stashed changes
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -62,4 +69,15 @@ public class LocationsController {
             List<Location> locations = locationService.getRecommendedLocations();
             return ResponseEntity.ok(ApiResponse.success("Found 5 recommended locations.", locations));
         }
+<<<<<<< Updated upstream
+=======
+
+        @PostMapping("/public/searchByFilters")
+        public ResponseEntity<ApiResponse<Page<Location>>> searchLocationByFilters(@RequestBody SearchFiltersDto searchFiltersDto,
+                                                                                   @RequestParam(name = "page")int page){
+            PageRequest pageRequest = PageRequest.of(page,10);
+            Page<Location> locationsList = locationService.getLocationVySearchFilters(searchFiltersDto, pageRequest);
+            return ResponseEntity.ok(ApiResponse.success("Location list successfully returned.", locationsList));
+        }
+>>>>>>> Stashed changes
 }

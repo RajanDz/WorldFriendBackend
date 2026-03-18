@@ -4,7 +4,13 @@ import com.example.worldFriend.dto.CreateLocationRequest;
 import com.example.worldFriend.model.Location;
 import com.example.worldFriend.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+<<<<<<< Updated upstream
+=======
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+>>>>>>> Stashed changes
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,4 +82,35 @@ public class LocationService {
         }
         return locations;
     }
+<<<<<<< Updated upstream
+=======
+
+        public Page<Location> getLocationVySearchFilters(SearchFiltersDto searchFiltersDto, Pageable pageable){
+        Specification<Location> query = getFiltersQuery(searchFiltersDto);
+        return  locationRepository.findAll(query,pageable);
+    }
+    public Specification<Location> getFiltersQuery(SearchFiltersDto searchFilters) {
+        return ((root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (searchFilters.getName() != null && !searchFilters.getName().isEmpty()) {
+                predicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("name")),"%"+searchFilters.getName()+"%")
+                );
+            }
+            if (searchFilters.getCountry() != null && !searchFilters.getCountry().isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("country"), searchFilters.getCountry()));
+            }
+            if (searchFilters.getCity() != null && !searchFilters.getCity().isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("city"), searchFilters.getCity()));
+            }
+            if (searchFilters.getType() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("type"), LocationType.valueOf(searchFilters.getType().toUpperCase())));
+            }
+
+            return predicates.isEmpty() ?
+                    criteriaBuilder.conjunction() :
+                    criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        });
+    }
+>>>>>>> Stashed changes
 }
