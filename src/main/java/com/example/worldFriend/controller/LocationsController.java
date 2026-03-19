@@ -5,14 +5,13 @@ import com.example.worldFriend.dto.CreateLocationRequest;
 import com.example.worldFriend.dto.SearchFiltersDto;
 import com.example.worldFriend.generics.ApiResponse;
 import com.example.worldFriend.model.Location;
-import com.example.worldFriend.repository.LocationRepository;
 import com.example.worldFriend.service.LocationService;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -66,8 +65,14 @@ public class LocationsController {
         }
 
         @PostMapping("/public/searchByFilters")
-        public ResponseEntity<ApiResponse<List<Location>>> searchLocationByFilters(@RequestBody SearchFiltersDto searchFiltersDto){
-            List<Location> locationsList = locationService.getLocationVySearchFilters(searchFiltersDto);
+        public ResponseEntity<ApiResponse<Page<Location>>> searchLocationByFilters(
+                @RequestBody SearchFiltersDto searchFiltersDto,
+                @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+
+            // Vraćamo čisti Page objekat koji Spring Data JPA podržava out-of-the-box
+            Page<Location> locationsList = locationService.getLocationBySearchFilters(searchFiltersDto, pageable);
+
             return ResponseEntity.ok(ApiResponse.success("Location list successfully returned.", locationsList));
         }
+
 }
