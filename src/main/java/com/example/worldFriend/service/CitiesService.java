@@ -1,21 +1,26 @@
 package com.example.worldFriend.service;
 
 
+import com.example.worldFriend.dto.SearchFiltersDto;
 import com.example.worldFriend.model.City;
 import com.example.worldFriend.repository.CitiesRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
+import jakarta.persistence.criteria.Predicate;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -57,6 +62,30 @@ public class CitiesService {
         city.updateCityImg("/" + uniqueName);
         citiesRepository.save(city);
         return city;
+    }
+
+    public Page<City> getCitiesBySearchFilters(SearchFiltersDto searchFiltersDto, Pageable pageable){
+        Specification<City> query = searchCitiesList(searchFiltersDto);
+        return citiesRepository.findAll(query,pageable);
+    }
+
+    public Specification<City> searchCitiesList(SearchFiltersDto searchFiltersDto){
+        return ((root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (searchFiltersDto.getName() != null && !searchFiltersDto.getName().isEmpty()){
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%"+searchFiltersDto.getName().toLowerCase()+"%"));
+            }
+            if (searchFiltersDto.getCountry() != null && !searchFiltersDto.getCountry().isEmpty()){
+                predicates.add(criteriaBuilder.equal(root.get("country"),searchFiltersDto.getCountry()));
+            }
+            if (searchFiltersDto.getType() != null && !searchFiltersDto.getType().isEmpty()){
+                predicates.add(criteriaBuilder.equal(root.get("type"), searchFiltersDto.getType()));
+            }
+
+            return predicates.isEmpty() ?
+                    criteriaBuilder.conjunction() :
+                    criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        });
     }
 
 }

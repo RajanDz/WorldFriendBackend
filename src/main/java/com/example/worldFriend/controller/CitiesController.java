@@ -1,10 +1,14 @@
 package com.example.worldFriend.controller;
 
 
+import com.example.worldFriend.dto.SearchFiltersDto;
 import com.example.worldFriend.generics.ApiResponse;
 import com.example.worldFriend.model.City;
 import com.example.worldFriend.service.CitiesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,5 +43,10 @@ public class CitiesController {
     public ResponseEntity<ApiResponse<City>> uploadCoverImg(@RequestParam(name = "id") Long id, @RequestParam(name = "cover_img")MultipartFile file) throws IOException {
         City updatedCity = citiesService.uploadImg(id,file);
         return ResponseEntity.ok(ApiResponse.success("Img is uploaded", updatedCity));
+    }
+    @PostMapping("/public/searchCities")
+    public ResponseEntity<ApiResponse<Page<City>>> getCitiesByFilter(@RequestBody SearchFiltersDto searchFiltersDto, @PageableDefault(size = 10, sort = "name")Pageable pageable){
+        Page<City> citiesList = citiesService.getCitiesBySearchFilters(searchFiltersDto,pageable);
+        return ResponseEntity.ok(ApiResponse.success("Successfully returned cities list", citiesList));
     }
 }
