@@ -3,6 +3,7 @@ package com.example.worldFriend.controller;
 
 import com.example.worldFriend.dto.CreateLocationRequest;
 import com.example.worldFriend.dto.SearchFiltersDto;
+import com.example.worldFriend.dto.SearchReturnListDto;
 import com.example.worldFriend.generics.ApiResponse;
 import com.example.worldFriend.model.Location;
 import com.example.worldFriend.service.LocationService;
@@ -39,11 +40,7 @@ public class LocationsController {
             Location locationMethod = locationService.createLocation(request);
             return ResponseEntity.ok(ApiResponse.success("Created", locationMethod));
         }
-//        @GetMapping("/public/locations")
-//        public ResponseEntity<ApiResponse<List<Location>>> searchLocations(@RequestParam(name = "name") String name){
-//            List<Location> locationList = locationService.findLocationsByContainingKey(name);
-//            return ResponseEntity.ok(ApiResponse.success("Successfully", locationList));
-//        }
+
         @PostMapping("/uploadImg")
         public ResponseEntity<ApiResponse<Location>> uploadImg(
                 @RequestParam(name = "id") Long id
@@ -64,11 +61,11 @@ public class LocationsController {
             List<Location> locations = locationService.findByCityName(cityName);
             return ResponseEntity.ok(ApiResponse.success("Found locations by city name: ", locations));
         }
-//        @GetMapping("/public/similarLocations/{id}")
-//        public ResponseEntity<ApiResponse<List<Location>>> getSimilarLocations(@PathVariable(name = "id")Long id){
-//            List<Location> locations = locationService.findLocationsByCityId(id);
-//            return ResponseEntity.ok(ApiResponse.success("Locations list", locations));
-//        }
+        @GetMapping("/public/similarLocations/{id}")
+        public ResponseEntity<ApiResponse<List<Location>>> getSimilarLocations(@PathVariable(name = "id")Long id){
+            List<Location> locations = locationService.findLocationByCityId(id);
+            return ResponseEntity.ok(ApiResponse.success("Locations list", locations));
+        }
         @GetMapping("/public/getRecommendedLocations")
         public ResponseEntity<ApiResponse<List<Location>>> getRecommendedLocations(){
             List<Location> locations = locationService.getRecommendedLocations();
@@ -76,12 +73,12 @@ public class LocationsController {
         }
 
         @PostMapping("/public/searchByFilters")
-        public ResponseEntity<ApiResponse<Page<Location>>> searchLocationByFilters(
+        public ResponseEntity<ApiResponse<Page<SearchReturnListDto>>> searchLocationByFilters(
                 @RequestBody SearchFiltersDto searchFiltersDto,
                 @PageableDefault(size = 10, sort = "name") Pageable pageable) {
 
             // Vraćamo čisti Page objekat koji Spring Data JPA podržava out-of-the-box
-            Page<Location> locationsList = locationService.getLocationBySearchFilters(searchFiltersDto, pageable);
+            Page<SearchReturnListDto> locationsList = locationService.getLocationBySearchFilters(searchFiltersDto, pageable);
 
             return ResponseEntity.ok(ApiResponse.success("Location list successfully returned.", locationsList));
         }

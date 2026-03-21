@@ -2,11 +2,13 @@ package com.example.worldFriend.service;
 
 import com.example.worldFriend.dto.CreateLocationRequest;
 import com.example.worldFriend.dto.SearchFiltersDto;
+import com.example.worldFriend.dto.SearchReturnListDto;
 import com.example.worldFriend.enums.LocationType;
 import com.example.worldFriend.model.City;
 import com.example.worldFriend.model.Location;
 import com.example.worldFriend.repository.CitiesRepository;
 import com.example.worldFriend.repository.LocationRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,6 +39,15 @@ public class LocationService {
 
     public List<Location> getRecommendedLocations() {
         return locationRepository.findAll(PageRequest.of(0, 5)).getContent();
+    }
+
+
+    public List<Location> findLocationByCityId(Long id){
+       List<Location> similarLocations = locationRepository.findByCityId(id);
+       if (similarLocations.isEmpty()){
+           throw new EntityNotFoundException("No locations found");
+       }
+       return similarLocations;
     }
 
     public Location createLocation(CreateLocationRequest locationRequest) {
@@ -89,9 +100,9 @@ public class LocationService {
         return locations;
     }
 
-    public Page<Location> getLocationBySearchFilters(SearchFiltersDto searchFiltersDto, Pageable pageable) {
+    public Page<SearchReturnListDto> getLocationBySearchFilters(SearchFiltersDto searchFiltersDto, Pageable pageable) {
         Specification<Location> query = getFiltersQuery(searchFiltersDto);
-        return locationRepository.findAll(query, pageable);
+        return locationRepository.findAll(query, pageable).map(city -> new SearchReturnListDto(city.getId(),city.getName(),city.getCountry()));
 
     }
 
