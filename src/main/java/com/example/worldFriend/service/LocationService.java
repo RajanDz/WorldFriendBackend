@@ -85,15 +85,11 @@ public class LocationService {
         return locations;
     }
 
-        public Page<Location> getLocationVySearchFilters(SearchFiltersDto searchFiltersDto, Pageable pageable){
+        public Page<Location> searchLocationByFilters(SearchFiltersDto searchFiltersDto, Pageable pageable){
         Specification<Location> query = getFiltersQuery(searchFiltersDto);
         return  locationRepository.findAll(query,pageable);
-
-        public List<Location> getLocationVySearchFilters(SearchFiltersDto searchFiltersDto){
-        Specification<Location> query = getFiltersQuery(searchFiltersDto);
-        return  locationRepository.findAll(query);
     }
-    public Specification<Location> searchLocationsList(SearchFiltersDto searchFilters) {
+    public Specification<Location> getFiltersQuery(SearchFiltersDto searchFilters) {
         return ((root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (searchFilters.getName() != null && !searchFilters.getName().isEmpty()) {
