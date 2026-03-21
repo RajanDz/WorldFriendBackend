@@ -2,7 +2,6 @@ package com.example.worldFriend.model;
 
 import com.example.worldFriend.enums.LocationType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
@@ -43,19 +42,23 @@ public class Location {
 
     @Column(name = "city")
     @NonNull
-    private String city;
+    private String cityName;
 
     @Column(name = "latitude")
     @NonNull
-    private double latitude;
+    private Double latitude;
 
     @Column(name = "longitude")
     @NonNull
-    private double longitude;
+    private Double longitude;
 
     @Column(name = "cover_image_url")
     private String coverImageUrl;
 
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private City city;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

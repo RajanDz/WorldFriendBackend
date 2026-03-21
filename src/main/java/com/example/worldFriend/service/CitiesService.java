@@ -2,6 +2,7 @@ package com.example.worldFriend.service;
 
 
 import com.example.worldFriend.dto.SearchFiltersDto;
+import com.example.worldFriend.dto.SearchReturnListDto;
 import com.example.worldFriend.model.City;
 import com.example.worldFriend.repository.CitiesRepository;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +41,7 @@ public class CitiesService {
     public City getCityById(Long id){
         return citiesRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "We can not find city with provided id"));
     }
+
 
     public List<City> findCitiesBySearchParamters(String name) {
         return citiesRepository.findByNameContainingIgnoreCase(name);
@@ -64,9 +67,10 @@ public class CitiesService {
         return city;
     }
 
-    public Page<City> getCitiesBySearchFilters(SearchFiltersDto searchFiltersDto, Pageable pageable){
+    public Page<SearchReturnListDto> getCitiesBySearchFilters(SearchFiltersDto searchFiltersDto, Pageable pageable){
         Specification<City> query = searchCitiesList(searchFiltersDto);
-        return citiesRepository.findAll(query,pageable);
+        return citiesRepository.findAll(query,pageable)
+                .map(city -> new SearchReturnListDto(city.getId(),city.getName(),city.getCountry()));
     }
 
     public Specification<City> searchCitiesList(SearchFiltersDto searchFiltersDto){
@@ -87,5 +91,4 @@ public class CitiesService {
                     criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         });
     }
-
 }

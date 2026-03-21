@@ -2,6 +2,7 @@ package com.example.worldFriend.controller;
 
 
 import com.example.worldFriend.dto.SearchFiltersDto;
+import com.example.worldFriend.dto.SearchReturnListDto;
 import com.example.worldFriend.generics.ApiResponse;
 import com.example.worldFriend.model.City;
 import com.example.worldFriend.service.CitiesService;
@@ -45,8 +46,8 @@ public class CitiesController {
         return ResponseEntity.ok(ApiResponse.success("Img is uploaded", updatedCity));
     }
     @PostMapping("/public/searchCities")
-    public ResponseEntity<ApiResponse<Page<City>>> getCitiesByFilter(@RequestBody SearchFiltersDto searchFiltersDto, @PageableDefault(size = 10, sort = "name")Pageable pageable){
-        Page<City> citiesList = citiesService.getCitiesBySearchFilters(searchFiltersDto,pageable);
+    public ResponseEntity<ApiResponse<Page<SearchReturnListDto>>> getCitiesByFilter(@RequestBody SearchFiltersDto searchFiltersDto, @PageableDefault(size = 10, sort = "name")Pageable pageable){
+        Page<SearchReturnListDto> citiesList = citiesService.getCitiesBySearchFilters(searchFiltersDto,pageable);
         return ResponseEntity.ok(ApiResponse.success("Successfully returned cities list", citiesList));
     }
 }

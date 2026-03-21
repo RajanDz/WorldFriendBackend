@@ -30,16 +30,27 @@ public class LocationService {
 
     private String defaultPath = "C:/Users/Rajan44/OneDrive/Desktop/worldFriendCoverImgs/";
     private final LocationRepository locationRepository;
-
-    public Location findLocationById(long id){
-        return locationRepository.findById(id).orElseThrow( () ->new ResponseStatusException(HttpStatus.NOT_FOUND,"We cannot find location with provided id"));
+    private final CitiesRepository citiesRepository;
+    public Location findLocationById(long id) {
+        return locationRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "We cannot find location with provided id"));
     }
 
-    public List<Location> getRecommendedLocations(){
-        return locationRepository.findAll(PageRequest.of(0,5)).getContent();
+    public List<Location> getRecommendedLocations() {
+        return locationRepository.findAll(PageRequest.of(0, 5)).getContent();
     }
-    public Location createLocation(CreateLocationRequest locationRequest){
-        Location location = new Location(locationRequest.getName(),locationRequest.getDescription(),locationRequest.getType(),locationRequest.getCountry(),locationRequest.getCity(),locationRequest.getLatitude(),locationRequest.getLongitude());
+
+
+    public List<Location> findLocationByCityId(Long id){
+       List<Location> similarLocations = locationRepository.findByCityId(id);
+       if (similarLocations.isEmpty()){
+           throw new EntityNotFoundException("No locations found");
+       }
+       return similarLocations;
+    }
+
+    public Location createLocation(CreateLocationRequest locationRequest) {
+        City city = citiesRepository.findById(locationRequest.getCityId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "We cannot find city with provided id"));
+        Location location = new Location(locationRequest.getName(), locationRequest.getDescription(), locationRequest.getType(), locationRequest.getCountry(), locationRequest.getCity(), locationRequest.getLatitude(), locationRequest.getLongitude(),city);
         locationRepository.save(location);
         return location;
     }
@@ -85,11 +96,13 @@ public class LocationService {
         return locations;
     }
 
-        public Page<Location> searchLocationByFilters(SearchFiltersDto searchFiltersDto, Pageable pageable){
+    public Page<SearchReturnListDto> getLocationBySearchFilters(SearchFiltersDto searchFiltersDto, Pageable pageable) {
         Specification<Location> query = getFiltersQuery(searchFiltersDto);
-        return  locationRepository.findAll(query,pageable);
+        return locationRepository.findAll(query, pageable).map(city -> new SearchReturnListDto(city.getId(),city.getName(),city.getCountry()));
+
     }
-    public Specification<Location> getFiltersQuery(SearchFiltersDto searchFilters) {
+
+    public Specification<Location> getFiltersQuery(SearchFiltersDto searchFilters){
         return ((root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (searchFilters.getName() != null && !searchFilters.getName().isEmpty()) {

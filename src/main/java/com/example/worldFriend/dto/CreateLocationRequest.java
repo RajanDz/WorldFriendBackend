@@ -22,4 +22,6 @@ public class CreateLocationRequest {
     private double latitude;
     @NotNull
     private double longitude;
+    @NotNull
+    private Long cityId;
 }
