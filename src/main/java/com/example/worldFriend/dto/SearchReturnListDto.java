@@ -1,16 +1,14 @@
 package com.example.worldFriend.dto;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public class SearchReturnListDto {
-    public SearchReturnListDto(Long id, String name, String country) {
-        this.id = id;
-        this.name = name;
-        this.country = country;
-    }
 
-    private Long id;
-    private String name;
-    private String country;
+
+    private final Long id;
+    private final String name;
+    private final String country;
 }
